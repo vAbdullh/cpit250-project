@@ -2,7 +2,7 @@ name: Pull Request Report (PDF)
 
 on:
   pull_request:
-    types: [synchronize]
+    types: [closed]
 
 jobs:
   generate-pdf-report:
@@ -17,23 +17,21 @@ jobs:
         with:
           node-version: '16'
 
-     - name: Install dependencies
+      - name: Install dependencies
         run: npm install puppeteer markdown-pdf moment-timezone
 
       - name: Fetch PR details and files changed
         id: pr-details
         run: |
+          if [ "${{ github.event.pull_request.merged }}" != "true" ]; then exit 0; fi
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_BODY="${{ github.event.pull_request.body }}"
           PR_NUMBER="${{ github.event.pull_request.number }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
-          PR_DATE="${{ github.event.pull_request.created_at }}"
-
+          PR_DATE="${{ github.event.pull_request.merged_at }}"
           FORMATTED_DATE=$(node -e "const moment = require('moment-timezone'); const date = '${PR_DATE}'; console.log(moment(date).tz('Asia/Riyadh').format('DD/MM/YY HH:mm'));")
-          
           FILES_CHANGED=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-          
           echo "![Logo](https://github.com/${{ github.repository }}/raw/main/public/logo192.png)" > report.md
           echo "# PR Title: ${PR_TITLE} (#${PR_NUMBER})" >> report.md
           echo "*Date: ${FORMATTED_DATE}*" >> report.md
@@ -41,12 +39,14 @@ jobs:
           echo "---" >> report.md
           echo "" >> report.md
           echo "### PR Description:" >> report.md
-          echo "${PR_BODY}" >> report.md
+          if [ -z "${PR_BODY}" ]; then
+            echo "No description provided for this PR." >> report.md
+          else
+            echo "${PR_BODY}" >> report.md
+          fi
           echo "" >> report.md
           echo "---" >> report.md
           echo "### Files Changed" >> report.md
-          
-          # Add files changed to the markdown
           echo "$FILES_CHANGED" | while read -r file; do
             echo "- $file" >> report.md
           done
