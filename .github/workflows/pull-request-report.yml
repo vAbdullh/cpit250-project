@@ -2,28 +2,24 @@ name: Pull Request Report (PDF)
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [synchronize]
 
 jobs:
   generate-pdf-report:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      # Step 3: Install dependencies (puppeteer and markdown-pdf)
-      - name: Install dependencies
+     - name: Install dependencies
         run: npm install puppeteer markdown-pdf moment-timezone
 
-      # Step 4: Fetch PR details and files changed
       - name: Fetch PR details and files changed
         id: pr-details
         run: |
@@ -33,16 +29,12 @@ jobs:
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
           PR_DATE="${{ github.event.pull_request.created_at }}"
 
-          # Convert PR date to KSA time (Asia/Riyadh) and format as dd/mm/yy hh:mm
           FORMATTED_DATE=$(node -e "const moment = require('moment-timezone'); const date = '${PR_DATE}'; console.log(moment(date).tz('Asia/Riyadh').format('DD/MM/YY HH:mm'));")
           
-          # Fetch list of files changed in the PR
           FILES_CHANGED=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
           
-          # Save to a markdown file
-          echo "![Logo](https://via.placeholder.com/150)" > report.md
-           echo "![Logo](https://github.com/${{ github.repository }}/raw/main/public/logo192.png)" > report.md
+          echo "![Logo](https://github.com/${{ github.repository }}/raw/main/public/logo192.png)" > report.md
           echo "# PR Title: ${PR_TITLE} (#${PR_NUMBER})" >> report.md
           echo "*Date: ${FORMATTED_DATE}*" >> report.md
           echo "" >> report.md
@@ -59,13 +51,11 @@ jobs:
             echo "- $file" >> report.md
           done
 
-      # Step 5: Convert markdown to HTML and generate PDF
       - name: Generate PDF from Markdown
         run: |
           cat report.md
           npx markdown-pdf report.md
 
-      # Step 6: Upload the generated PDF as an artifact
       - name: Upload PDF as artifact
         uses: actions/upload-artifact@v3
         with:
