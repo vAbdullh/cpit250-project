@@ -1,41 +1,61 @@
-# Step 1: Install Chromium
-- name: Install Chromium
-  run: |
-    sudo apt-get update
-    sudo apt-get install -y chromium-browser
+name: Pull Request Report (PDF)
 
-# Step 2: Install puppeteer-core
-- name: Install dependencies
-  run: npm install puppeteer-core
+on:
+  pull_request:
+    types: [opened, synchronize]
 
-# Step 3: Run Puppeteer with the installed Chromium
-- name: Generate PDF
-  run: |
-    echo "Generating PDF..."
-    cat <<EOF > report.html
-    <html>
-    <head><title>Pull Request Report</title></head>
-    <body>
-      <h1>Pull Request Report</h1>
-      <p>PR URL: <a href="${{ github.event.pull_request.html_url }}">${{ github.event.pull_request.html_url }}</a></p>
-      <h2>Files Changed:</h2>
-      <pre>
-        $(git diff --name-only)
-      </pre>
-    </body>
-    </html>
-    EOF
+jobs:
+  generate-pdf-report:
+    runs-on: ubuntu-latest
 
-    node -e "
-    const puppeteer = require('puppeteer-core');
-    (async () => {
-      const browser = await puppeteer.launch({
-        executablePath: '/usr/bin/chromium-browser',
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
-      const page = await browser.newPage();
-      await page.goto('file://' + process.cwd() + '/report.html');
-      await page.pdf({ path: 'report.pdf', format: 'A4' });
-      await browser.close();
-    })();
-    "
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      # Step 3: Install dependencies (puppeteer and markdown-pdf)
+      - name: Install dependencies
+        run: npm install puppeteer markdown-pdf
+
+      # Step 4: Fetch Pull Request details
+      - name: Fetch PR details
+        id: pr-details
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          PR_DATE="${{ github.event.pull_request.created_at }}"
+          
+          # Fetch commits for the PR
+          COMMIT_LIST=$(git log --pretty=format:"* %h %s (%an, %ad)" --date=short)
+          
+          # Save to a markdown file
+          echo "## Pull Request #${PR_NUMBER}: ${PR_TITLE}" > report.md
+          echo "### Author: ${PR_AUTHOR}" >> report.md
+          echo "### Date: ${PR_DATE}" >> report.md
+          echo "" >> report.md
+          echo "### PR Body" >> report.md
+          echo "${PR_BODY}" >> report.md
+          echo "" >> report.md
+          echo "### Commits" >> report.md
+          echo "${COMMIT_LIST}" >> report.md
+
+      # Step 5: Convert markdown to HTML and generate PDF
+      - name: Generate PDF from Markdown
+        run: |
+          cat report.md
+          npx markdown-pdf report.md
+
+      # Step 6: Upload the generated PDF as an artifact
+      - name: Upload PDF as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pull-request-report
+          path: report.pdf
