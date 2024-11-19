@@ -33,8 +33,8 @@ jobs:
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
           PR_DATE="${{ github.event.pull_request.created_at }}"
           
-          # Fetch commits for the PR
-          COMMIT_LIST=$(git log --pretty=format:"| %s | %ad | %an |" --date=short)
+          # Fetch commits for the PR (excluding merge commits)
+          COMMIT_LIST=$(git log --no-merges --pretty=format:"| %s | %ad | %an |" --date=short)
 
           # Save to a markdown file following the template
           echo "![Logo](https://github.com/${{ github.repository }}/raw/main/public/logo192.png)" > report.md
