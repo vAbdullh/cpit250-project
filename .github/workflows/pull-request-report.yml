@@ -21,7 +21,7 @@ jobs:
 
       # Step 3: Install dependencies (puppeteer and markdown-pdf)
       - name: Install dependencies
-        run: npm install puppeteer markdown-pdf
+        run: npm install puppeteer markdown-pdf moment-timezone
 
       # Step 4: Fetch PR details and files changed
       - name: Fetch PR details and files changed
@@ -32,6 +32,9 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
           PR_DATE="${{ github.event.pull_request.created_at }}"
+
+          # Convert PR date to KSA time (Asia/Riyadh) and format as dd/mm/yy hh:mm
+          FORMATTED_DATE=$(node -e "const moment = require('moment-timezone'); const date = '${PR_DATE}'; console.log(moment(date).tz('Asia/Riyadh').format('DD/MM/YY HH:mm'));")
           
           # Fetch list of files changed in the PR
           FILES_CHANGED=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -39,8 +42,9 @@ jobs:
           
           # Save to a markdown file
           echo "![Logo](https://via.placeholder.com/150)" > report.md
+           echo "![Logo](https://github.com/${{ github.repository }}/raw/main/public/logo192.png)" > report.md
           echo "# PR Title: ${PR_TITLE} (#${PR_NUMBER})" >> report.md
-          echo "*Date: ${PR_DATE}*" >> report.md
+          echo "*Date: ${FORMATTED_DATE}*" >> report.md
           echo "" >> report.md
           echo "---" >> report.md
           echo "" >> report.md
