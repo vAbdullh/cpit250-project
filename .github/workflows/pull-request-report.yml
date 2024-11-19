@@ -38,13 +38,16 @@ jobs:
           "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
           
           # Save to a markdown file
-          echo "## Pull Request #${PR_NUMBER}: ${PR_TITLE}" > report.md
-          echo "### Author: ${PR_AUTHOR}" >> report.md
-          echo "### Date: ${PR_DATE}" >> report.md
+          echo "![Logo](https://via.placeholder.com/150)" > report.md
+          echo "# PR Title: ${PR_TITLE} (#${PR_NUMBER})" >> report.md
+          echo "*Date: ${PR_DATE}*" >> report.md
           echo "" >> report.md
-          echo "### PR Body" >> report.md
+          echo "---" >> report.md
+          echo "" >> report.md
+          echo "### PR Description:" >> report.md
           echo "${PR_BODY}" >> report.md
           echo "" >> report.md
+          echo "---" >> report.md
           echo "### Files Changed" >> report.md
           
           # Add files changed to the markdown
