@@ -1,60 +1,41 @@
-name: Pull Request Report (PDF)
+# Step 1: Install Chromium
+- name: Install Chromium
+  run: |
+    sudo apt-get update
+    sudo apt-get install -y chromium-browser
 
-on:
-  pull_request:
-    types: [opened, synchronize]
+# Step 2: Install puppeteer-core
+- name: Install dependencies
+  run: npm install puppeteer-core
 
-jobs:
-  generate-pdf-report:
-    runs-on: ubuntu-latest
+# Step 3: Run Puppeteer with the installed Chromium
+- name: Generate PDF
+  run: |
+    echo "Generating PDF..."
+    cat <<EOF > report.html
+    <html>
+    <head><title>Pull Request Report</title></head>
+    <body>
+      <h1>Pull Request Report</h1>
+      <p>PR URL: <a href="${{ github.event.pull_request.html_url }}">${{ github.event.pull_request.html_url }}</a></p>
+      <h2>Files Changed:</h2>
+      <pre>
+        $(git diff --name-only)
+      </pre>
+    </body>
+    </html>
+    EOF
 
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Step 2: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16"
-
-      # Step 3: Install Puppeteer
-      - name: Install dependencies
-        run: npm install puppeteer
-
-      # Step 4: Generate PDF using Puppeteer
-      - name: Generate PDF
-        run: |
-          echo "Generating PDF..."
-          cat <<EOF > report.html
-          <html>
-          <head><title>Pull Request Report</title></head>
-          <body>
-            <h1>Pull Request Report</h1>
-            <p>PR URL: <a href="${{ github.event.pull_request.html_url }}">${{ github.event.pull_request.html_url }}</a></p>
-            <h2>Files Changed:</h2>
-            <pre>
-              $(git diff --name-only)
-            </pre>
-          </body>
-          </html>
-          EOF
-
-          node -e "
-          const puppeteer = require('puppeteer');
-          (async () => {
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            await page.goto('file://' + process.cwd() + '/report.html');
-            await page.pdf({ path: 'report.pdf', format: 'A4' });
-            await browser.close();
-          })();
-          "
-
-      # Step 5: Save the PDF as an artifact
-      - name: Upload PDF
-        uses: actions/upload-artifact@v3
-        with:
-          name: pull-request-report
-          path: report.pdf
+    node -e "
+    const puppeteer = require('puppeteer-core');
+    (async () => {
+      const browser = await puppeteer.launch({
+        executablePath: '/usr/bin/chromium-browser',
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      const page = await browser.newPage();
+      await page.goto('file://' + process.cwd() + '/report.html');
+      await page.pdf({ path: 'report.pdf', format: 'A4' });
+      await browser.close();
+    })();
+    "
