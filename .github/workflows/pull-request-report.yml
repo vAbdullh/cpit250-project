@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "20"
 
       # Step 3: Install dependencies (puppeteer and markdown-pdf)
       - name: Install dependencies
@@ -33,11 +33,11 @@ jobs:
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
           PR_DATE="${{ github.event.pull_request.created_at }}"
 
-          # Fetch commits for the PR (excluding merge commits)
-          COMMIT_LIST=$(git log --no-merges --pretty=format:"| %s | %ad | %an |" --date=short)
+          # Fetch commits for the PR (excluding merge commits) with full details
+          COMMIT_LIST=$(git log)
 
           # Save to a markdown file following the template
-          echo "![Logo](https://github.com/${{ github.repository }}/raw/main/public/logo192.png){: width="50" }" > report.md
+          echo '<img src="https://github.com/${{ github.repository }}/raw/main/public/logo192.png" width="50" />' > report.md
           echo "# PR Title: ${PR_TITLE} (#${PR_NUMBER})" >> report.md
           echo "*Date: ${PR_DATE}*" >> report.md
           echo "---" >> report.md
@@ -55,8 +55,8 @@ jobs:
           echo "" >> report.md
 
           echo "### Commits:" >> report.md
-          echo "| Commit Message | Date | Author |" >> report.md
-          echo "|----------------|------|--------|" >> report.md
+          echo "| Commit Hash | Commit Message | Date | Author |" >> report.md
+          echo "|-------------|----------------|------|--------|" >> report.md
           echo "${COMMIT_LIST}" >> report.md
 
       # Step 5: Convert markdown to HTML and generate PDF
