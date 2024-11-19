@@ -34,17 +34,29 @@ jobs:
           PR_DATE="${{ github.event.pull_request.created_at }}"
           
           # Fetch commits for the PR
-          COMMIT_LIST=$(git log --pretty=format:"* %h %s (%an, %ad)" --date=short)
+          COMMIT_LIST=$(git log --pretty=format:"| %s | %ad | %an |" --date=short)
+
+          # Save to a markdown file following the template
+          echo "![Logo](https://github.com/${{ github.repository }}/raw/main/public/logo192.png)" > report.md
+          echo "# PR Title: ${PR_TITLE} (#${PR_NUMBER})" >> report.md
+          echo "*Date: ${PR_DATE}*" >> report.md
+          echo "---" >> report.md
+          echo "" >> report.md
+
+          echo "### PR Description:" >> report.md
+          if [ -n "$PR_BODY" ]; then
+            echo "${PR_BODY}" >> report.md
+          else
+            echo "No description provided." >> report.md
+          fi
+          echo "" >> report.md
           
-          # Save to a markdown file
-          echo "## Pull Request #${PR_NUMBER}: ${PR_TITLE}" > report.md
-          echo "### Author: ${PR_AUTHOR}" >> report.md
-          echo "### Date: ${PR_DATE}" >> report.md
+          echo "---" >> report.md
           echo "" >> report.md
-          echo "### PR Body" >> report.md
-          echo "${PR_BODY}" >> report.md
-          echo "" >> report.md
-          echo "### Commits" >> report.md
+
+          echo "### Commits:" >> report.md
+          echo "| Commit Message | Date | Author |" >> report.md
+          echo "|----------------|------|--------|" >> report.md
           echo "${COMMIT_LIST}" >> report.md
 
       # Step 5: Convert markdown to HTML and generate PDF
