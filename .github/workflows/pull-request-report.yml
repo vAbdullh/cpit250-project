@@ -17,14 +17,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: '16'
 
       # Step 3: Install dependencies (puppeteer and markdown-pdf)
       - name: Install dependencies
         run: npm install puppeteer markdown-pdf
 
-      # Step 4: Fetch Pull Request details
-      - name: Fetch PR details
+      # Step 4: Fetch PR details and files changed
+      - name: Fetch PR details and files changed
         id: pr-details
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
@@ -32,32 +32,25 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
           PR_DATE="${{ github.event.pull_request.created_at }}"
-
-          # Fetch commits for the PR (excluding merge commits) with full details
-          COMMIT_LIST=$(git log)
-
-          # Save to a markdown file following the template
-          echo '<img src="https://github.com/${{ github.repository }}/raw/main/public/logo192.png" width="50" />' > report.md
-          echo "# PR Title: ${PR_TITLE} (#${PR_NUMBER})" >> report.md
-          echo "*Date: ${PR_DATE}*" >> report.md
-          echo "---" >> report.md
+          
+          # Fetch list of files changed in the PR
+          FILES_CHANGED=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+          
+          # Save to a markdown file
+          echo "## Pull Request #${PR_NUMBER}: ${PR_TITLE}" > report.md
+          echo "### Author: ${PR_AUTHOR}" >> report.md
+          echo "### Date: ${PR_DATE}" >> report.md
           echo "" >> report.md
-
-          echo "### PR Description:" >> report.md
-          if [ -n "$PR_BODY" ]; then
-            echo "${PR_BODY}" >> report.md
-          else
-            echo "No description provided." >> report.md
-          fi
+          echo "### PR Body" >> report.md
+          echo "${PR_BODY}" >> report.md
           echo "" >> report.md
-
-          echo "---" >> report.md
-          echo "" >> report.md
-
-          echo "### Commits:" >> report.md
-          echo "| Commit Hash | Commit Message | Date | Author |" >> report.md
-          echo "|-------------|----------------|------|--------|" >> report.md
-          echo "${COMMIT_LIST}" >> report.md
+          echo "### Files Changed" >> report.md
+          
+          # Add files changed to the markdown
+          echo "$FILES_CHANGED" | while read -r file; do
+            echo "- $file" >> report.md
+          done
 
       # Step 5: Convert markdown to HTML and generate PDF
       - name: Generate PDF from Markdown
