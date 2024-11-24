@@ -20,7 +20,7 @@ export default function Navbar() {
     };
 
     return (
-        <div className={`bg-primary text-default absolute bottom-0 left-0 w-full p-2`}>
+        <div className={`bg-primary text-default fixed bottom-0 left-0 w-full p-2`}>
             <div className="flex justify-around">
                 <Link
                     to="/home"  // Link to the home page

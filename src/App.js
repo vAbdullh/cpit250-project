@@ -8,7 +8,7 @@ import { DataProvider } from './context/DataContext';
 
 function App() {
   return (
-    <DataProvider> 
+    <DataProvider>
       <Router>
         <Routes>
           <Route path="*" element={<Navigate to="/" />} />
@@ -17,6 +17,8 @@ function App() {
           <Route path="/help" element={<Help />} />
         </Routes>
         <Navbar />
+        <div className='h-20 bg-transparent p-1 bg-primary order-12 z-[-5] relative'>
+        </div>
       </Router>
     </DataProvider>
   );

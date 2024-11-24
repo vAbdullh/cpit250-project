@@ -1,67 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import L from "leaflet"; // Import Leaflet for custom marker icon
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useData } from "../context/DataContext"; // Import context
+import { useData } from "../context/DataContext";
 
 const Map = () => {
-    const { theme, userLocation, updateLocation } = useData(); // Access context
-    const [zoomLevel, setZoomLevel] = useState(5); // Default zoom level
+    const { theme, userLocation } = useData();
 
-    // Function to get the user's current location
-    const getUserLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    updateLocation([latitude, longitude]); // Update location in context
-                    setZoomLevel(15); // Zoom in on the user's location
-                },
-                (error) => {
-                    console.log("Error getting location:", error);
-                }
-            );
-        } else {
-            console.log("Geolocation not supported");
-        }
-    };
+    const defaultLocation = [24.7136, 46.6753];
 
-    useEffect(() => {
-        if (!userLocation) {
-            getUserLocation(); // Only get the location if not already set
-        }
-    });
-
-    // Default location if no location is available
-    const defaultLocation = [24.7136, 46.6753]; // Riyadh as fallback
-    const location = userLocation || defaultLocation;
-
-    // Custom marker icon (fix default icon issue)
     const defaultIcon = new L.Icon({
-        iconUrl: require("leaflet/dist/images/marker-icon.png"), // Default marker icon
-        iconSize: [25, 41], // Set size
-        iconAnchor: [12, 41], // Anchor point of the icon
-        popupAnchor: [1, -34], // Position of popup relative to the icon
-        shadowSize: [41, 41], // Shadow size
+        iconUrl: require("leaflet/dist/images/marker-icon.png"),
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
     });
 
-    // Custom hook to update the map center and zoom level when location changes
-    const UpdateMapView = () => {
+    const UpdateMarker = () => {
         const map = useMap();
-        useEffect(() => {
-            map.setView(userLocation, zoomLevel); // Corrected: Use setView to update map center and zoom level
-            if (userLocation) {
-            }
-        });
 
-        return null;
+        useEffect(() => {
+            if (userLocation) {
+                map.setView(userLocation, 15); // Update map view to the new location
+            }
+        }, [map]); // Only depend on 'map', not 'userLocation'
+
+        return userLocation ? (
+            <Marker position={userLocation} icon={defaultIcon}>
+                <Popup>You are here!</Popup>
+            </Marker>
+        ) : null;
     };
 
     return (
         <div className="h-screen overflow-hidden absolute top-0 left-0 z-[-1]">
             <MapContainer
-                center={location}
-                zoom={zoomLevel}
+                center={userLocation || defaultLocation}
+                zoom={5}
                 style={{ height: "100vh", width: "100vw" }}
                 zoomControl={false}
             >
@@ -72,12 +48,7 @@ const Map = () => {
                             : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     }
                 />
-                {userLocation && (
-                    <Marker position={userLocation} icon={defaultIcon}>
-                        <Popup>You are here!</Popup>
-                    </Marker>
-                )}
-                <UpdateMapView />
+                <UpdateMarker />
             </MapContainer>
         </div>
     );
