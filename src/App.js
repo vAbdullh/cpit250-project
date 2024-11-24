@@ -4,11 +4,11 @@ import Home from './pages/Home';
 import Docs from './pages/Docs';
 import Help from './pages/Help';
 import Navbar from './pages/Navbar';
-import { DataProvider, useData } from './context/DataContext';
+import { DataProvider } from './context/DataContext';
 
 function App() {
   return (
-    <DataProvider> {/* Wrap your components inside the DataProvider */}
+    <DataProvider> 
       <Router>
         <Routes>
           <Route path="*" element={<Navigate to="/" />} />
