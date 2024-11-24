@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
-import { IoIosHome } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { useData } from "../context/DataContext";
 
 const Help = () => {
+  const { theme } = useData();
   const [openIndex, setOpenIndex] = useState(null);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [error, setError] = useState("");
@@ -54,16 +54,13 @@ const Help = () => {
   ];
 
   return (
-    <div className="px-4 py-8 w-full mx-auto space-y-6 text-white">
-      <Link to={'/'} className=''>
-        <IoIosHome size={32} color="#1e293b" />
-      </Link>
+    <div className="px-4 py-8 w-full mx-auto space-y-6 text-default bg-primary min-h-screen">
       <h1 className="text-2xl font-bold text-center mb-6">Help Center</h1>
       <div className="space-y-4">
         {faqs.map((faq, index) => (
           <div key={index} className="border rounded-lg overflow-hidden">
             <button
-              className="w-full flex justify-between items-center p-4 bg-slate-800 text-left font-medium"
+              className={`w-full flex justify-between items-center p-4 text-left font-medium ${theme === 'light' ? 'bg-slate-200' : 'bg-slate-800 text-white'}`}
               onClick={() => toggleFAQ(index)}
             >
               {`Q${index + 1} - ${faq.question}`}
@@ -83,13 +80,13 @@ const Help = () => {
         <h2 className="text-xl font-bold text-center mb-4">Contact Us</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
+            <label className="block text-sm font-medium text-default mb-1">Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 bg-slate-800 text-white"
+              className={`w-full p-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400  ${theme === 'light' ? 'bg-slate-200' : 'bg-slate-800 text-white'}`}
               placeholder="Your Name"
             />
           </div>
@@ -100,7 +97,7 @@ const Help = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 bg-slate-800 text-white"
+              className={`w-full p-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400  ${theme === 'light' ? 'bg-slate-200' : 'bg-slate-800 text-white'}`}
               placeholder="Your Email"
             />
           </div>
@@ -110,7 +107,7 @@ const Help = () => {
               name="message"
               value={formData.message}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 bg-slate-800 text-white resize-none"
+              className={`w-full p-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none  ${theme === 'light' ? 'bg-slate-200' : 'bg-slate-800 text-white'}`}
               placeholder="Your Message"
               rows="4"
             ></textarea>

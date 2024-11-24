@@ -2,9 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-color: #000; /** white */
+  --secondary-color: #9ca4af; /** black */
+  --text-color: #636363;
+}
 html {
-  @apply bg-black;
+  @apply bg-gray-500;
 }
 .leaflet-control-attribution {
   display: none;
+}
+.bg-primary {
+  background-color: var(--primary-color);
+}
+.bg-secondary {
+  background-color: var(--secondary-color);
+}
+.text-secondary {
+  color: var(--secondary-color);
+}
+.text-default {
+  color: var(--text-color);
 }

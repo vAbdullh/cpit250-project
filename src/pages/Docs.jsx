@@ -1,13 +1,8 @@
 import React from "react";
-import { IoIosHome } from "react-icons/io";
-import { Link } from "react-router-dom";
 
 const Docs = () => {
   return (
-    <div className="px-4 py-8 w-full mx-auto space-y-6 text-gray-700">
-      <Link to={'/'} className=''>
-        <IoIosHome size={32} color="#1e293b" />
-      </Link>
+    <div className="px-4 py-8 w-full mx-auto space-y-6 text-default bg-primary min-h-screen">
       <section>
         <h2 className="text-2xl font-bold mb-4">Introduction</h2>
         <p>
