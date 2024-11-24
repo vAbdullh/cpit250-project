@@ -57,7 +57,7 @@ export default function Home() {
             {/* For mobile view */}
             <div className="lg:hidden mx-auto overflow-hidden">
                 <div
-                    className={`bg-primary text-default fixed left-0 bottom-8 transition-all duration-300 ${isExpanded ? "h-5/6" : "h-64"
+                    className={`bg-primary text-default fixed left-0 bottom-8 transition-all ${isExpanded ? "h-5/6" : "h-64"
                         } w-screen p-10 rounded-t-3xl shadow-2xl`}
                 >
                     <div className="min-h-6 flex justify-end">
