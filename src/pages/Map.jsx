@@ -30,7 +30,7 @@ const Map = () => {
         if (!userLocation) {
             getUserLocation(); // Only get the location if not already set
         }
-    }, [userLocation]);
+    });
 
     // Default location if no location is available
     const defaultLocation = [24.7136, 46.6753]; // Riyadh as fallback
@@ -49,10 +49,10 @@ const Map = () => {
     const UpdateMapView = () => {
         const map = useMap();
         useEffect(() => {
+            map.setView(userLocation, zoomLevel); // Corrected: Use setView to update map center and zoom level
             if (userLocation) {
-                map.setView(userLocation, zoomLevel); // Corrected: Use setView to update map center and zoom level
             }
-        }, [userLocation, zoomLevel, map]);
+        });
 
         return null;
     };
