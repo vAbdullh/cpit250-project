@@ -54,7 +54,7 @@ const Help = () => {
   ];
 
   return (
-    <div className="px-4 py-8 w-full mx-auto space-y-6 text-default bg-primary min-h-screen">
+    <div className="px-4 py-8 w-full mx-auto space-y-6 text-default bg-primary min-h-screen transition-all transform">
       <h1 className="text-2xl font-bold text-center mb-6">Help Center</h1>
       <div className="space-y-4">
         {faqs.map((faq, index) => (

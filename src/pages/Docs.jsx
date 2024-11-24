@@ -2,7 +2,7 @@ import React from "react";
 
 const Docs = () => {
   return (
-    <div className="px-4 py-8 w-full mx-auto space-y-6 text-default bg-primary min-h-screen">
+    <div className="px-4 py-8 w-full mx-auto space-y-6 text-default bg-primary min-h-screen  transition-all transform">
       <section>
         <h2 className="text-2xl font-bold mb-4">Introduction</h2>
         <p>
