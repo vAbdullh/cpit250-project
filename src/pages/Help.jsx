@@ -47,10 +47,10 @@ const Help = () => {
   };
 
   const faqs = [
-    { question: 'A question?', answer: 'answer here' },
-    { question: 'A question?', answer: 'answer here' },
-    { question: 'A question?', answer: 'answer here' },
-    { question: 'A question?', answer: 'answer here' },
+    { question: 'How is us?', answer: 'We are passionate students who aspire to develop society' },
+    { question: 'What we offer?', answer: 'We present an application to improve the quality of driving in the Kingdom of Saudi Arabia' },
+    { question: 'How we provide our services?', answer: 'We provide our servvices in cooperation with FCIT students and Google services' },
+    
   ];
 
   return (
