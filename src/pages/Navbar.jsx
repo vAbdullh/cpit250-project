@@ -23,7 +23,7 @@ export default function Navbar() {
         <div className={`bg-primary text-default fixed bottom-0 left-0 w-full p-2 transition-all transform`}>
             <div className="flex justify-around">
                 <Link
-                    to="/home"  // Link to the home page
+                    to="/"  // Link to the home page
                     onClick={() => handleTabChange('home')}
                     className={`flex flex-col items-center ${activeTab === 'home' ? 'text-green-500 animate-pulse' : 'text-default'}`}
                 >

@@ -11,7 +11,7 @@ export const useData = () => {
 };
 
 export const DataProvider = ({ children }) => {
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState("dark");
     const [userLocation, setUserLocation] = useState(null);
     const [loading, setLoading] = useState(false);
 
