@@ -31,7 +31,7 @@ Secure Environment: Your data is safe with our advanced security measure
         <p>
         24/7 Customer Support: Assistance whenever you need it.
 Custom API Integration: Tailored APIs to meet your business needs.
-Cloud-Based Solutions: Access your data anytime, anywhere.
+Cloud-Based Solutions: Access your dataa anytime, anywhere.
 Data Analytics Tools: Powerful tools for analyzing and visualizing data.
 Training and Documentation: Comprehensive resources to get you started.        </p>
       </section>
