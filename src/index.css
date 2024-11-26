@@ -10,9 +10,6 @@
 html {
   @apply bg-gray-500;
 }
-#root {
-  min-height: 100vh;
-}
 .leaflet-control-attribution {
   display: none;
 }

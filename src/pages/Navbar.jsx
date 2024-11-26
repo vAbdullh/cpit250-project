@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom'; // Import Link and useLocation for routing
 import { FaHome } from 'react-icons/fa';
 import { TiDocument } from 'react-icons/ti';
 import { IoMdHelpCircleOutline } from 'react-icons/io';
@@ -10,6 +10,14 @@ import { useData } from '../context/DataContext'; // Import the context to handl
 export default function Navbar() {
     const [activeTab, setActiveTab] = useState('home'); // Track the active tab
     const { theme, toggleTheme } = useData();  // Access the theme state from context
+    const location = useLocation(); // Get the current path from useLocation
+
+    // Reset the activeTab state if the path matches '/route/:end'
+    useEffect(() => {
+        if (location.pathname.startsWith('/route/')) {
+            setActiveTab('');  // Reset the active tab state
+        }
+    }, [location]);  // Run the effect whenever the location changes
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -25,7 +33,7 @@ export default function Navbar() {
                 <Link
                     to="/"  // Link to the home page
                     onClick={() => handleTabChange('home')}
-                    className={`flex flex-col items-center ${activeTab === 'home' ? 'text-green-500 animate-pulse' : 'text-default'}`}
+                    className={`flex flex-col items-center ${activeTab === 'home' ? 'text-green-500' : 'text-default'}`}
                 >
                     <FaHome size={30} />
                     <span>Home</span>
@@ -34,7 +42,7 @@ export default function Navbar() {
                 <Link
                     to="/docs"  // Link to the docs page
                     onClick={() => handleTabChange('docs')}
-                    className={`flex flex-col items-center ${activeTab === 'docs' ? 'text-green-500 animate-pulse' : 'text-default'}`}
+                    className={`flex flex-col items-center ${activeTab === 'docs' ? 'text-green-500' : 'text-default'}`}
                 >
                     <TiDocument size={30} />
                     <span>Docs</span>
@@ -43,7 +51,7 @@ export default function Navbar() {
                 <Link
                     to="/help"  // Link to the help page
                     onClick={() => handleTabChange('help')}
-                    className={`flex flex-col items-center ${activeTab === 'help' ? 'text-green-500 animate-pulse' : 'text-default'}`}
+                    className={`flex flex-col items-center ${activeTab === 'help' ? 'text-green-500' : 'text-default'}`}
                 >
                     <IoMdHelpCircleOutline size={30} />
                     <span>Help</span>
@@ -68,7 +76,6 @@ export default function Navbar() {
 
                     <span>Theme</span>
                 </button>
-
             </div>
         </div>
     );
