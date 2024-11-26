@@ -11,7 +11,7 @@ function App() {
   return (
     <DataProvider>
       <Router>
-        <p className='bg-green-500 text-white w-fit absolute right-0 top-0 px-3 py-1'>Beta</p>
+        <p className='bg-green-500 text-white w-fit absolute right-0 top-0 px-3 py-1 z-20'>Beta</p>
         <Routes>
           <Route path="*" element={<Navigate to="/" />} />
           <Route path="/" element={<Home />} />
