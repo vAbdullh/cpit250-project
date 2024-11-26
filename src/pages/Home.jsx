@@ -5,10 +5,13 @@ import { FaLocationArrow } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import { useData } from "../context/DataContext";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import L from "leaflet"; // التأكد من استخدام مكتبة Leaflet لحساب المسافة
 
 export default function Home() {
     const [inputValue, setInputValue] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
+    const [distance, setDistance] = useState(null); // لتخزين المسافة بين الموقعين
+    const [userLocation, setUserLocation] = useState(null); // تخزين موقع المستخدم
     const { updateLocation, loading, setLoading } = useData();
 
     // Handle input changes
@@ -33,6 +36,7 @@ export default function Home() {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
+                    setUserLocation([latitude, longitude]);  // تخزين موقع المستخدم
                     updateLocation([latitude, longitude]);  // Update location in context
                     setLoading(false);  // Stop loading
                 },
@@ -62,6 +66,13 @@ export default function Home() {
                 const { lat, lon, display_name } = data[0];
                 updateLocation([lat, lon]);  // Update location in context with search result coordinates
                 setLoading(false);
+
+                // تحقق من وجود موقع المستخدم قبل حساب المسافة
+                if (userLocation) {
+                    // حساب المسافة بين الموقعين باستخدام Leaflet
+                    const distanceInKm = calculateDistance(userLocation, [lat, lon]);
+                    setDistance(distanceInKm); // تحديث المسافة في الحالة
+                }
             } else {
                 console.log("No results found for this location.");
                 setLoading(false);
@@ -70,6 +81,16 @@ export default function Home() {
             console.error("Error fetching location:", error);
             setLoading(false);
         }
+    };
+
+    // حساب المسافة بين نقطتين باستخدام Leaflet
+    const calculateDistance = (loc1, loc2) => {
+        if (loc1 && loc2) {
+            const point1 = L.latLng(loc1[0], loc1[1]); // تحويل الإحداثيات إلى نقطتين باستخدام Leaflet
+            const point2 = L.latLng(loc2[0], loc2[1]);
+            return point1.distanceTo(point2) / 1000; // حساب المسافة وتحويلها إلى كيلومتر
+        }
+        return null; // إذا كانت الإحداثيات غير صالحة
     };
 
     return (
@@ -131,6 +152,11 @@ export default function Home() {
                             Search
                         </button>
                     </div>
+                    {distance !== null && (
+                        <div className="mt-5 text-white font-bold">
+                            <p>Distance: {distance.toFixed(2)} km</p> {/* عرض المسافة */}
+                        </div>
+                    )}
                 </div>
 
                 <Map />
