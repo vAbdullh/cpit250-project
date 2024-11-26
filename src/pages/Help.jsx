@@ -47,10 +47,34 @@ const Help = () => {
   };
 
   const faqs = [
-    { question: 'How is us?', answer: 'We are passionate students who aspire to develop society' },
-    { question: 'What we offer?', answer: 'We present an application to improve the quality of driving in the Kingdom of Saudi Arabia' },
-    { question: 'How we provide our services?', answer: 'We provide our servvices in cooperation with FCIT students and Google services' },
-    
+    {
+      question: 'Who are we?',
+      answer: 'We are innovative IT students aiming to developes useable applications.'
+    },
+    {
+      question: 'What does the app do?',
+      answer: 'The app optimizes routes to reduce traffic and save travel time by using AI.'
+    },
+    {
+      question: 'Why isn’t the app working on my device?',
+      answer: 'Make sure to enable GPS and allow the app to access your location.'
+    },
+    {
+      question: 'How does the app choose routes?',
+      answer: 'It uses real-time data and AI to select the best possible route based on traffic, distance, and road conditions.'
+    },
+    {
+      question: 'Is the app available in all cities?',
+      answer: 'Currently, the app supports all cities Jeddah and cities around Jeddah, but we’re expanding coverage in future updates.'
+    },
+    {
+      question: 'How do I report an issue with the app?',
+      answer: 'You can use the form below to contact us any time, we are happy to hear you.'
+    },
+    {
+      question: 'Does the app work offline?',
+      answer: 'The app requires an internet connection to provide real-time traffic updates.'
+    }
   ];
 
   return (
