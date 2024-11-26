@@ -66,7 +66,7 @@ const Routing = () => {
                 // Always center the map on the user's current position
                 map.setView(currentPosition, 14, { animate: true });
             }
-        }, [map, currentPosition]);
+        }, [map]);
 
         return null;
     };
