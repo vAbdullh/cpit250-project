@@ -47,6 +47,31 @@ export default function Home() {
         }
     };
 
+    // Handle the search functionality using OpenStreetMap API
+    const handleSearch = async () => {
+        if (inputValue.trim() === "") return;
+        setLoading(true);
+
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(inputValue)}&format=json&limit=1`
+            );
+            const data = await response.json();
+
+            if (data.length > 0) {
+                const { lat, lon, display_name } = data[0];
+                updateLocation([lat, lon]);  // Update location in context with search result coordinates
+                setLoading(false);
+            } else {
+                console.log("No results found for this location.");
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error("Error fetching location:", error);
+            setLoading(false);
+        }
+    };
+
     return (
         <div>
             {/* If device does not support geolocation */}
@@ -98,6 +123,13 @@ export default function Home() {
                             onClick={handleInputClick}
                             className="bg-transparent outline-none ring-transparent text-black placeholder:text-gray-500 flex-1"
                         />
+                        <button
+                            onClick={handleSearch}
+                            className="bg-blue-600 text-white p-2 rounded-md"
+                            disabled={loading}
+                        >
+                            Search
+                        </button>
                     </div>
                 </div>
 
